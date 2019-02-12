@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
 
 import Summary from './components/Summary';
+import Productions from './components/Productions';
 
 class App extends Component {
   render() {
@@ -10,9 +12,21 @@ class App extends Component {
           <h1>EGGspenses</h1>
         </div>
 
-        <main>
-          <Summary/>
-        </main>
+        <Router>
+          <div>
+            <div class="container">
+              <ul class="nav nav-pills">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/productions">Productions</Link></li>
+              </ul>
+            </div>
+
+            <main>
+              <Route exact path="/" component={ Summary } />
+              <Route path="/productions" component={ Productions } />
+            </main>
+          </div>
+        </Router>
       </div>
     );
   }
