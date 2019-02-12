@@ -2,7 +2,7 @@ import React from 'react';
 
 import DateRangeWidget from './DateRangeWidget';
 import StatWidget from './StatWidget';
-import EggChart from './EggChart';
+import Chart from './Chart';
 import DateRangeSelector from './DateRangeSelector';
 
 import { GoogleChartService, LINE_CHART } from '../google_chart_service';
@@ -52,7 +52,7 @@ class ProductionsWidget extends DateRangeWidget {
     return (
       <StatWidget stat_title="Recent Productions">
         <DateRangeSelector group_name="productions" start_date_changed={ this.start_date_changed } end_date_changed={ this.end_date_changed }></DateRangeSelector>
-        <EggChart chart_id={ CHART_ID }></EggChart>
+        <Chart chart_id={ CHART_ID }></Chart>
       </StatWidget>
     );
   }

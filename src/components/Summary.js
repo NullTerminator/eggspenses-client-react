@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import ProductionsWidget from './ProductionsWidget';
 import WidgetRow from './WidgetRow';
+import ProductionsWidget from './ProductionsWidget';
+import ProfitsWidget from './ProfitsWidget';
 
 class Summary extends Component {
   render() {
@@ -9,6 +10,7 @@ class Summary extends Component {
       <div className="container-fluid">
         <WidgetRow>
           <ProductionsWidget/>
+          <ProfitsWidget/>
         </WidgetRow>
       </div>
     );
