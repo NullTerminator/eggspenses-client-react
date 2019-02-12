@@ -1,18 +1,15 @@
 import { Component } from 'react';
 
-import {chart_date_format, date_range, date_format, today, days_ago} from '../util';
+import { chart_date_format, date_range, date_format } from '../util';
 
 
 class DateRangeWidget extends Component {
 
-  constructor() {
-    super();
-    this.init_dates();
-  }
+  constructor(props) {
+    super(props);
 
-  init_dates() {
-    this.start_date = days_ago(6);
-    this.end_date = today();
+    this.start_date_changed = this.start_date_changed.bind(this);
+    this.end_date_changed = this.end_date_changed.bind(this);
   }
 
   date_params() {
@@ -22,14 +19,25 @@ class DateRangeWidget extends Component {
     };
   }
 
-
-  date_range() {
-    return date_range(this.start_date, this.end_date);
+  date_range_strings() {
+    const range = date_range(this.start_date, this.end_date);
+    return range.map((d) => { return chart_date_format(d); });
   }
 
-  date_range_strings() {
-    let range = this.date_range();
-    return range.map((d) => { return chart_date_format(d); });
+  start_date_changed(date) {
+    this.start_date = date;
+    this._safe_make_request();
+  }
+
+  end_date_changed(date) {
+    this.end_date = date;
+    this._safe_make_request();
+  }
+
+  _safe_make_request() {
+    if (this.start_date && this.end_date) {
+      this.make_request();
+    }
   }
 
 }

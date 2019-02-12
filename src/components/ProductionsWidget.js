@@ -3,19 +3,19 @@ import React from 'react';
 import DateRangeWidget from './DateRangeWidget';
 import StatWidget from './StatWidget';
 import EggChart from './EggChart';
+import DateRangeSelector from './DateRangeSelector';
 
-import {GoogleChartService, LINE_CHART} from '../google_chart_service';
+import { GoogleChartService, LINE_CHART } from '../google_chart_service';
 import ProductionsService from '../productions_service';
-import {date_format, months, chart_date_format} from '../util';
+import { chart_date_format } from '../util';
 
 const CHART_ID = 'egg-chart-productions';
 
 class ProductionsWidget extends DateRangeWidget {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.prod_svc = ProductionsService.instance;
-    this.make_request();
     this.chart_svc = GoogleChartService.instance;
   }
 
@@ -32,11 +32,11 @@ class ProductionsWidget extends DateRangeWidget {
       return;
     }
 
-    let options = {
+    const options = {
       legend: { position: 'bottom' }
     };
 
-    let data = this.chart_svc.chart_data(
+    const data = this.chart_svc.chart_data(
       this.productions,
       'count',
       'Date',
@@ -51,6 +51,7 @@ class ProductionsWidget extends DateRangeWidget {
   render() {
     return (
       <StatWidget stat_title="Recent Productions">
+        <DateRangeSelector group_name="productions" start_date_changed={ this.start_date_changed } end_date_changed={ this.end_date_changed }></DateRangeSelector>
         <EggChart chart_id={ CHART_ID }></EggChart>
       </StatWidget>
     );
