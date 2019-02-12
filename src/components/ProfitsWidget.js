@@ -23,21 +23,17 @@ class ProfitsWidget extends DateRangeWidget {
   constructor(props) {
     super(props);
 
-    this.productions_svc = ProductionsService.instance;
-    this.chart_svc = GoogleChartService.instance;
-    this.expenses_svc = ExpensesService.instance;
-    this.asset_events_svc = AssetEventsService.instance;
-    this.sale_items_svc = SaleItemsService.instance;
+    this.chart_svc = GoogleChartService;
 
     this.state = {};
   }
 
   make_request() {
     Promise.all([
-      this.expenses_svc.all(this.date_params()),
-      this.asset_events_svc.all(this.date_params()),
-      this.productions_svc.all(this.date_params()),
-      this.sale_items_svc.all()
+      ExpensesService.all(this.date_params()),
+      AssetEventsService.all(this.date_params()),
+      ProductionsService.all(this.date_params()),
+      SaleItemsService.all()
     ])
       .then((responses) => {
         this.expenses = responses[0];

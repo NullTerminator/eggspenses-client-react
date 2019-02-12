@@ -6,6 +6,4 @@ class AssetEventsService extends ResourceService {
   }
 }
 
-AssetEventsService.instance = new AssetEventsService();
-
-export default AssetEventsService;
+export default new AssetEventsService();

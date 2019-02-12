@@ -2,7 +2,7 @@ import { ensure_attr_func, unique } from './util';
 
 export const LINE_CHART = 'LineChart';
 
-export class GoogleChartService {
+class GoogleChartService {
   constructor() {
     this._promise = new Promise((resolve) => {
       this._resolver = resolve;
@@ -74,4 +74,5 @@ export class GoogleChartService {
   }
 }
 
-GoogleChartService.instance = new GoogleChartService();
+const instance = new GoogleChartService();
+export { instance as GoogleChartService };

@@ -15,12 +15,11 @@ class ProductionsWidget extends DateRangeWidget {
   constructor(props) {
     super(props);
 
-    this.prod_svc = ProductionsService.instance;
-    this.chart_svc = GoogleChartService.instance;
+    this.chart_svc = GoogleChartService;
   }
 
   make_request() {
-    this.prod_svc.all(this.date_params())
+    ProductionsService.all(this.date_params())
       .then((productions) => {
         this.productions = productions;
         this._draw_chart();

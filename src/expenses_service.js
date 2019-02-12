@@ -6,6 +6,4 @@ class ExpensesService extends ResourceService {
   }
 }
 
-ExpensesService.instance = new ExpensesService();
-
-export default ExpensesService;
+export default new ExpensesService();

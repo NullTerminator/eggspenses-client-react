@@ -6,6 +6,4 @@ class SaleItemsService extends ResourceService {
   }
 }
 
-SaleItemsService.instance = new SaleItemsService();
-
-export default SaleItemsService;
+export default new SaleItemsService();

@@ -6,6 +6,4 @@ class ProductionsService extends ResourceService {
   }
 }
 
-ProductionsService.instance = new ProductionsService();
-
-export default ProductionsService;
+export default new ProductionsService();
