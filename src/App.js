@@ -15,8 +15,8 @@ class App extends Component {
 
         <Router>
           <div>
-            <div class="container">
-              <ul class="nav nav-pills">
+            <div className="container">
+              <ul className="nav nav-pills">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/productions">Productions</Link></li>
                 <li><Link to="/expenses">Expenses</Link></li>
