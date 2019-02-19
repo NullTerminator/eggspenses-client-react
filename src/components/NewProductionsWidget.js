@@ -48,7 +48,11 @@ class NewProductionsWidget extends Component {
     if (window.confirm('Are you sure you want to delete this production?')) {
       return ProductionsService.delete(this.state.edit_production)
         .then(() => {
-          this.setState({ edit_production: {} });
+          const reset_prod = {};
+          Object.assign(reset_prod, this.state.edit_production);
+          reset_prod.id = null;
+          reset_prod.count = 0;
+          this.setState({ edit_production: reset_prod });
         });
     }
   }

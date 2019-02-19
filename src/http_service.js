@@ -38,7 +38,7 @@ function request(path, method, params={}) {
     xhr.onload = function() {
       let body;
       try {
-        if (xhr.status !== 204) {
+        if (xhr.status !== 204 && method !== 'delete') {
           body = JSON.parse(xhr.responseText);
         }
       } catch(err) {
