@@ -11,6 +11,8 @@ import ProductionsService from '../productions_service';
 import ExpensesService from '../expenses_service';
 import AssetEventsService from '../asset_events_service';
 import SaleItemsService from '../sale_items_service';
+import EventAggregator from '../event_aggregator';
+import events from '../events';
 
 import ExpenseCalculator from '../expense_calculator';
 import ProfitCalculator from '../profit_calculator';
@@ -26,6 +28,10 @@ class ProfitsWidget extends DateRangeWidget {
     this.chart_svc = GoogleChartService;
 
     this.state = {};
+
+    EventAggregator.subscribe(events.productions.CREATED, this._check_add_production);
+    EventAggregator.subscribe(events.productions.UPDATED, this._check_add_production);
+    EventAggregator.subscribe(events.productions.DELETED, this._check_remove_production);
   }
 
   make_request() {
@@ -70,6 +76,23 @@ class ProfitsWidget extends DateRangeWidget {
     );
 
     this.chart_svc.draw(LINE_CHART, CHART_ID, data, options);
+  }
+
+  _check_add_production = (production) => {
+    if (this._is_in_range(production)) {
+      if (this.productions.indexOf(production) === -1) {
+        this.productions.push(production);
+      }
+      this._draw_chart();
+    }
+  }
+
+  _check_remove_production = (production) => {
+    let i = this.productions.indexOf(production);
+    if (i !== -1) {
+      this.productions.splice(i, 1);
+      this._draw_chart();
+    }
   }
 
   render() {
