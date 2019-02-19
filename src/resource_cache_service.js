@@ -27,6 +27,4 @@ class ResourceCacheService {
   }
 }
 
-ResourceCacheService.instance = new ResourceCacheService();
-
-export default ResourceCacheService;
+export default new ResourceCacheService();

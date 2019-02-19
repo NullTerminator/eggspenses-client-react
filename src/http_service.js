@@ -9,11 +9,15 @@ class HttpService {
     return request(path, 'put', params);
   }
 
+  patch(path, params) {
+    return request(path, 'patch', params);
+  }
+
   get(path, params) {
     if (params) {
-      path += `?` + Object.keys(params).map((k) => {
+      path += '?' + Object.keys(params).map((k) => {
         return `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`;
-      }).join(`&`);
+      }).join('&');
     }
 
     return request(path, 'get');
@@ -27,7 +31,7 @@ class HttpService {
 function request(path, method, params={}) {
   return new Promise(function(resolve, reject) {
     let xhr = new XMLHttpRequest();
-    xhr.open(method, path);
+    xhr.open(method.toUpperCase(), path);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
 
@@ -55,7 +59,7 @@ function request(path, method, params={}) {
     };
 
     xhr.onerror = function() {
-      reject(new HttpError('Server could not be reached', path, params));
+      reject(new HttpError(`Server could not be reached: ${method.toUpperCase()} to ${path}`, path, params));
     };
 
     //if (window.env.REQUEST_CREDENTIALS) {
@@ -66,6 +70,4 @@ function request(path, method, params={}) {
   });
 }
 
-HttpService.instance = new HttpService();
-
-export default HttpService;
+export default new HttpService();

@@ -7,17 +7,42 @@ const REACT_APP_API_HOST = process.env.REACT_APP_API_HOST;
 
 class ResourceService {
 
-  constructor(resource_name, cache_svc = ResourceCacheService.instance, http_svc = HttpService.instance) {
+  constructor(resource_name, cache_svc = ResourceCacheService, http_svc = HttpService) {
     this.resource_name = resource_name;
 
     this.cache_svc = cache_svc;
     this.http_svc = http_svc;
   }
 
+  save(resource) {
+    if (resource.id) {
+      return this.update(resource, resource);
+    } else {
+      return this.create(resource);
+    }
+  }
+
   create(params) {
     return this.http_svc.post(this._url(), this._safe_params(params))
       .then((response) => {
         return this._resource_from_response(response.data);
+      });
+  }
+
+  update(resource, params) {
+    if (!resource.id) {
+      return Promise.reject(new Error('Cannot update an unsaved resource.'));
+    }
+
+    return this.http_svc.patch(this._url(resource.id), this._safe_params(params))
+      .then((response) => {
+        return this._resource_from_response(response.data)
+          .then((updated) => {
+            //if (events[this.resource_name]) {
+              //this.eventer.publish(events[this.resource_name].UPDATED, updated);
+            //}
+            return resource;
+          });
       });
   }
 
@@ -47,6 +72,22 @@ class ResourceService {
 
   get(id) {
     return this._get_resource(this.resource_name, id);
+  }
+
+
+  delete(resource) {
+    if (!resource.id) {
+      return Promise.reject(new Error(`Cannot delete an unsaved resource.`));
+    }
+
+    return this.http_svc.delete(this._url(resource.id))
+      .then(() => {
+        let deleted = this.cache_svc.get(this.resource_name, resource.id);
+        //if (deleted && events[this.resource_name]) {
+          //this.eventer.publish(events[this.resource_name].DELETED, deleted);
+        //}
+        this.cache_svc.remove(this.resource_name, resource.id);
+      });
   }
 
 
@@ -97,15 +138,15 @@ class ResourceService {
         resource[dash_to_skid(key)] = resp_obj.attributes[key];
       });
       resource = this.cache_svc.set(type, resource.id, resource);
-      let resp_type = dash_to_skid(resp_obj.type);
+      const resp_type = dash_to_skid(resp_obj.type);
       if (extensions[resp_type]) {
         extensions[resp_type](resource);
       }
-      let promises = [];
+      const promises = [];
 
       if (resp_obj.relationships) {
         Object.keys(resp_obj.relationships).forEach((rel_name) => {
-          let relation = resp_obj.relationships[rel_name].data;
+          const relation = resp_obj.relationships[rel_name].data;
 
           if (Array.isArray(relation)) {
             function by_id(id) {
@@ -116,8 +157,8 @@ class ResourceService {
 
             resource[rel_name] = resource[rel_name] || [];
             relation.forEach((rel) => {
-              let rel_id = parseInt(rel.id);
-              let rel_type = dash_to_skid(rel.type);
+              const rel_id = parseInt(rel.id);
+              const rel_type = dash_to_skid(rel.type);
               // is this relation already loaded?
               if (!resource[rel_name].find(by_id(rel_id))) {
                 // prep the cache with an object or get one out
@@ -147,7 +188,7 @@ class ResourceService {
   }
 
   _safe_params(params) {
-    let safe = resource_params[this.resource_name];
+    const safe = resource_params[this.resource_name];
     if (safe) {
       params = safe(params);
     }
