@@ -1,17 +1,20 @@
 import ResourceCacheService from './resource_cache_service';
 import extensions from './resource_extensions';
 import resource_params from './resource_params';
+import events from './events';
 import HttpService from './http_service';
+import EventAggregator from './event_aggregator';
 
 const REACT_APP_API_HOST = process.env.REACT_APP_API_HOST;
 
 class ResourceService {
 
-  constructor(resource_name, cache_svc = ResourceCacheService, http_svc = HttpService) {
+  constructor(resource_name, cache_svc = ResourceCacheService, http_svc = HttpService, eventer = EventAggregator) {
     this.resource_name = resource_name;
 
     this.cache_svc = cache_svc;
     this.http_svc = http_svc;
+    this.eventer = eventer;
   }
 
   save(resource) {
@@ -25,7 +28,13 @@ class ResourceService {
   create(params) {
     return this.http_svc.post(this._url(), this._safe_params(params))
       .then((response) => {
-        return this._resource_from_response(response.data);
+        return this._resource_from_response(response.data)
+          .then((resource) => {
+            if (events[this.resource_name]) {
+              this.eventer.publish(events[this.resource_name].CREATED, resource);
+            }
+            return resource;
+          });
       });
   }
 
@@ -38,9 +47,9 @@ class ResourceService {
       .then((response) => {
         return this._resource_from_response(response.data)
           .then((updated) => {
-            //if (events[this.resource_name]) {
-              //this.eventer.publish(events[this.resource_name].UPDATED, updated);
-            //}
+            if (events[this.resource_name]) {
+              this.eventer.publish(events[this.resource_name].UPDATED, updated);
+            }
             return resource;
           });
       });
@@ -83,9 +92,9 @@ class ResourceService {
     return this.http_svc.delete(this._url(resource.id))
       .then(() => {
         let deleted = this.cache_svc.get(this.resource_name, resource.id);
-        //if (deleted && events[this.resource_name]) {
-          //this.eventer.publish(events[this.resource_name].DELETED, deleted);
-        //}
+        if (deleted && events[this.resource_name]) {
+          this.eventer.publish(events[this.resource_name].DELETED, deleted);
+        }
         this.cache_svc.remove(this.resource_name, resource.id);
       });
   }

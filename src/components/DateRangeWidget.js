@@ -40,6 +40,11 @@ class DateRangeWidget extends Component {
     }
   }
 
+
+  _is_in_range(resource) {
+    return this.start_date <= resource.date && this.end_date >= resource.date;
+  }
+
 }
 
 export default DateRangeWidget;
